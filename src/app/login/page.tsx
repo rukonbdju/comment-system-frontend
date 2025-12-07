@@ -1,7 +1,6 @@
 
-import { Button } from "@/components/shared-components/button"
-import { InputField } from "@/components/shared-components/input"
-import { Lock, Mail, MoveRight } from "lucide-react"
+import LoginForm from "@/components/auth/login-form"
+import { Lock } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
@@ -20,23 +19,8 @@ const LoginPage = () => {
                         Sign in to join the conversation
                     </p>
                 </div>
-                <form className=" space-y-4">
-                    <InputField
-                        icon={<Mail className="size-4" />}
-                        label="Email"
-                        name="email"
-                        type="email"
-                    />
-                    <InputField
-                        icon={<Lock className="size-4" />}
-                        label="Password"
-                        name="password"
-                        type="password"
-                    />
-                    <Button rightIcon={<MoveRight />} block={true} isLoading={false}>Login</Button>
-                </form>
+                <LoginForm />
                 <p className="mt-4 text-sm">New user? <Link className="text-indigo-500 hover:underline font-semibold" href={'/register'}>Registration</Link></p>
-
             </div>
         </div>
     )
