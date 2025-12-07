@@ -1,29 +1,18 @@
+import getTimeAgo from "@/utils/get-time-ago";
 import { useEffect, useState } from "react";
 
-const TimeAgo = ({ timestamp }: { timestamp: number }) => {
-    const [time, setTime] = useState("");
+const TimeAgo = ({ time }: { time: string }) => {
+    const [label, setLabel] = useState(() => getTimeAgo(time));
 
     useEffect(() => {
-        const update = () => {
-            const seconds = Math.floor((Date.now() - timestamp) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return setTime(Math.floor(interval) + "y");
-            interval = seconds / 2592000;
-            if (interval > 1) return setTime(Math.floor(interval) + "mo");
-            interval = seconds / 86400;
-            if (interval > 1) return setTime(Math.floor(interval) + "d");
-            interval = seconds / 3600;
-            if (interval > 1) return setTime(Math.floor(interval) + "h");
-            interval = seconds / 60;
-            if (interval > 1) return setTime(Math.floor(interval) + "m");
-            setTime("Just now");
-        };
-        update();
-        const timer = setInterval(update, 60000);
-        return () => clearInterval(timer);
-    }, [timestamp]);
+        const interval = setInterval(() => {
+            setLabel(getTimeAgo(time));
+        }, 60 * 1000); // update every minute
 
-    return <span className="text-xs text-slate-500 dark:text-slate-400">{time}</span>;
-};
+        return () => clearInterval(interval);
+    }, [time]);
+
+    return <span className="text-xs text-gray-500 ml-4 shrink-0">{label}</span>;
+}
 
 export default TimeAgo;
