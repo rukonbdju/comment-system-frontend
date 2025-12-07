@@ -1,14 +1,19 @@
 'use client'
 import { Button } from "@/components/shared-components/button"
 import { InputField } from "@/components/shared-components/input"
+import { useAppDispatch } from "@/hooks/useAppDispatch"
+import { setUser } from "@/lib/features/auth/auth.slice"
 import { baseURL } from "@/utils/base-url"
 import { Lock, Mail, MoveRight, User } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export const metadata = {
     title: 'Register'
 }
 const RegisterForm = () => {
+    const dispatch = useAppDispatch()
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
@@ -33,6 +38,10 @@ const RegisterForm = () => {
             })
             const result = await res.json()
             console.log(result)
+            if (result.success) {
+                dispatch(setUser(result.data))
+                router.push('/')
+            }
         } catch (error) {
             console.log(error)
         } finally {
