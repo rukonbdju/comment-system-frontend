@@ -86,7 +86,7 @@ const commentSlice = createSlice({
             if (!state.comments) return;
 
             state.comments = state.comments.filter(
-                (comment) => comment._id !== action.payload
+                (comment) => comment._id !== action.payload._id
             );
         },
 

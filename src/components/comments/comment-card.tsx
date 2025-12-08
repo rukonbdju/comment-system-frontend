@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { authSelector } from "@/lib/features/auth/auth.slice";
 import { useState } from "react";
 import CommentEditForm from "./comment-edit-form";
+import DeleteComment from "./comment-delete";
 
 const CommentCard = ({ comment }: { comment: CommentDTO }) => {
     const [isEditing, setIsEditing] = useState(false)
@@ -103,7 +104,9 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                                 <Edit className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
                             </button>
                         }
-
+                        {
+                            comment.user._id == user?._id && <DeleteComment id={comment._id} />
+                        }
                     </div>
                 </div>
             </div>
