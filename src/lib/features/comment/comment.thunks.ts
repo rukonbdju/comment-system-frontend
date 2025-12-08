@@ -13,7 +13,6 @@ export const getComments = createAsyncThunk('comments',
             limit: String(limit),
             sort,
         }).toString();
-        console.log(query)
         const res = await fetch(`${baseURL}/comments?${query}`, {
             credentials: 'include',
         });
@@ -22,6 +21,5 @@ export const getComments = createAsyncThunk('comments',
             throw new Error(errorData?.message || `HTTP error! status: ${res.status}`);
         }
         const result = await res.json();
-        console.log(result)
         return result;
     });

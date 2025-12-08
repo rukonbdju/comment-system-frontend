@@ -36,7 +36,6 @@ const LoginForm = () => {
                 body: JSON.stringify(formData)
             })
             const result = await res.json()
-            console.log(result)
             if (result.success) {
                 dispatch(setUser(result.data))
                 router.push('/')

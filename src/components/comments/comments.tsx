@@ -11,7 +11,6 @@ import PaginationControls from "./pagination-comments";
 const Comments = () => {
     const dispatch = useAppDispatch()
     const { comments, isLoading } = useSelector(commentsSelector)
-    console.log(comments)
     useEffect(() => {
         dispatch(getComments({}))
     }, [dispatch])

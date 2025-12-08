@@ -23,7 +23,6 @@ const CommentForm = () => {
                 body: JSON.stringify({ content })
             })
             const result = await res.json()
-            console.log(result)
             if (result.success) {
                 dispatch(addComment(result.data))
                 setContent('')

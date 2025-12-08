@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 const ProtectedPage = ({ children }: { children: ReactNode }) => {
     const dispatch = useAppDispatch()
     const { isLoading, user } = useSelector(authSelector)
-    console.log(user)
     const router = useRouter()
     useEffect(() => {
         if (!user) dispatch(getLoggedInUser())

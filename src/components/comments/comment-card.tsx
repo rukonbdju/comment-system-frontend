@@ -15,7 +15,6 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
     const [isEditing, setIsEditing] = useState(false)
     const dispatch = useAppDispatch()
     const { user } = useSelector(authSelector)
-    console.log(comment.user._id, user?._id)
     const handleReaction = async (reactionType: string) => {
         try {
             const res = await fetch(`${baseURL}/reactions/comment/${reactionType}`, {
@@ -27,7 +26,6 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                 body: JSON.stringify({ targetId: comment._id })
             })
             const result = await res.json()
-            console.log(result)
             if (result.success) {
                 dispatch(updateReaction({ _id: comment._id, reactionType: result.data.reaction.reactionType }))
             }
@@ -94,10 +92,6 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                             aria-label="Like"
                         >
                             <MessageSquare className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
-
-                            {/* <span className={`transition-all duration-150`}>
-                                {formatNumberCount(0)}
-                            </span> */}
                         </button>
                         {
                             comment.user._id == user?._id && <button

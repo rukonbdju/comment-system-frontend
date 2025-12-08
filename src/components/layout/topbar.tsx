@@ -21,7 +21,6 @@ const TopBar = () => {
                 }
             })
             const result = await res.json()
-            console.log(result)
             if (result.success) {
                 dispatch(clearUser())
                 router.push('login')
