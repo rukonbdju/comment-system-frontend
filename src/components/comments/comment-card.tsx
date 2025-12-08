@@ -8,14 +8,41 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { updateReaction } from "@/lib/features/comment/comment.slice";
 import { useSelector } from "react-redux";
 import { authSelector } from "@/lib/features/auth/auth.slice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentEditForm from "./comment-edit-form";
 import DeleteComment from "./comment-delete";
-
+import { useSocket } from "@/hooks/useSocket";
+interface RealTimeCountPayload {
+    targetId: string;
+    likeCount: number;
+    dislikeCount: number;
+}
 const CommentCard = ({ comment }: { comment: CommentDTO }) => {
+    const [counts, setCounts] = useState({ likeCount: comment.likeCount, dislikeCount: comment.dislikeCount })
+    const socket = useSocket(comment._id)
     const [isEditing, setIsEditing] = useState(false)
     const dispatch = useAppDispatch()
     const { user } = useSelector(authSelector)
+    useEffect(() => {
+        if (!socket) return; // Wait until the socket connection is ready
+
+        const eventName = 'REACTION_COUNT_UPDATE';
+
+        const handleUpdate = (payload: RealTimeCountPayload) => {
+            // Ensure the update is for *this* specific comment
+            if (payload.targetId === comment._id) {
+                console.log(`Received real-time update for ${comment._id}:`, payload);
+                setCounts({ likeCount: payload.likeCount, dislikeCount: payload.dislikeCount })
+            }
+        };
+
+        socket.on(eventName, handleUpdate);
+
+        // Cleanup the listener when the component unmounts
+        return () => {
+            socket.off(eventName, handleUpdate);
+        };
+    }, [socket, comment._id]);
     const handleReaction = async (reactionType: string) => {
         try {
             const res = await fetch(`${baseURL}/reactions/comment/${reactionType}`, {
@@ -72,7 +99,7 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                             }
 
                             <span className={`transition-all duration-150`}>
-                                {formatNumberCount(comment.likeCount)}
+                                {formatNumberCount(counts.likeCount)}
                             </span>
                         </button>
                         <button
@@ -85,7 +112,7 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                             }
 
                             <span className={`transition-all duration-150`}>
-                                {formatNumberCount(comment.dislikeCount)}
+                                {formatNumberCount(counts.dislikeCount)}
                             </span>
                         </button>
                         <button
