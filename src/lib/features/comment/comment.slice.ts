@@ -42,6 +42,23 @@ const commentSlice = createSlice({
                 state.comments[index] = action.payload;
             }
         },
+        // ✅ Update a comment reaction
+        updateReaction: (state, action) => {
+            if (!state.comments) return;
+
+            const index = state.comments.findIndex(
+                (c) => c._id === action.payload._id
+            );
+
+            if (index !== -1) {
+                state.comments[index] = {
+                    ...state.comments[index],
+                    likeCount: action.payload.reactionType == 'like' ? state.comments[index].likeCount + 1 : state.comments[index].likeCount,
+                    dislikeCount: action.payload.reactionType == 'dislike' ? state.comments[index].dislikeCount - 1 : state.comments[index].dislikeCount,
+                    currentUserReaction: action.payload.reactionType
+                };
+            }
+        },
 
         // ✅ Delete a comment
         deleteComment: (state, action) => {
@@ -82,7 +99,7 @@ const commentSlice = createSlice({
     }
 })
 export const commentsSelector = (state: RootState) => state.comment;
-export const { setComments, addComment, updateComment, deleteComment } = commentSlice.actions;
+export const { setComments, addComment, updateComment, updateReaction, deleteComment } = commentSlice.actions;
 
 const commentReducer = commentSlice.reducer;
 export default commentReducer;

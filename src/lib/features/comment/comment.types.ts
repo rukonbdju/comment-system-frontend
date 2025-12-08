@@ -4,6 +4,7 @@ export interface CommentDTO {
     _id: string;
     content: string;
     user: user;
+    currentUserReaction: string | null;
     likeCount: number;
     dislikeCount: number;
     createdAt: string;

@@ -1,11 +1,40 @@
-import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Edit, MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 import Avatar from "../shared-components/avatar";
 import formatNumberCount from "@/utils/format-number-count";
-import { CommentDTO } from "./comments";
 import TimeAgo from "../shared-components/time-ago";
+import { baseURL } from "@/utils/base-url";
+import { CommentDTO } from "@/lib/features/comment/comment.types";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { updateReaction } from "@/lib/features/comment/comment.slice";
+import { useSelector } from "react-redux";
+import { authSelector } from "@/lib/features/auth/auth.slice";
+import { useState } from "react";
+import CommentEditForm from "./comment-edit-form";
 
 const CommentCard = ({ comment }: { comment: CommentDTO }) => {
-
+    const [isEditing, setIsEditing] = useState(false)
+    const dispatch = useAppDispatch()
+    const { user } = useSelector(authSelector)
+    console.log(comment.user._id, user?._id)
+    const handleReaction = async (reactionType: string) => {
+        try {
+            const res = await fetch(`${baseURL}/reactions/comment/${reactionType}`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({ targetId: comment._id })
+            })
+            const result = await res.json()
+            console.log(result)
+            if (result.success) {
+                dispatch(updateReaction({ _id: comment._id, reactionType: result.data.reaction.reactionType }))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <div className='flex mb-8'>
             {/* Avatar Container */}
@@ -25,42 +54,62 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
                     </div>
 
                     {/* Content */}
-                    <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                        {comment.content}
-                    </p>
+                    {
+                        isEditing ? <CommentEditForm setIsEditing={setIsEditing} id={comment._id} defaultContent={comment.content} /> : <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                            {comment.content}
+                        </p>
+                    }
+
 
                     {/* Actions (Like/Dislike/Reply) */}
-                    <div className={`mt-3 flex items-center space-x-1`}>
+                    <div className={`mt-3 flex items-center`}>
                         <button
-                            className={`flex items-center space-x-1.5 py-1 px-3 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
+                            onClick={() => handleReaction('like')}
+                            className={`flex items-center space-x-1.5 py-1 px-2 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
                             aria-label="Like"
                         >
-                            <ThumbsUp className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
+                            {
+                                comment.currentUserReaction === 'like' ? <ThumbsUp fill="blue" className={`w-4 h-4 transition-all duration-150 text-indigo-600`} /> : <ThumbsUp className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
+                            }
 
                             <span className={`transition-all duration-150`}>
                                 {formatNumberCount(comment.likeCount)}
                             </span>
                         </button>
                         <button
-                            className={`flex items-center space-x-1.5 py-1 px-3 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
-                            aria-label="Like"
+                            onClick={() => handleReaction('dislike')}
+                            className={`flex items-center space-x-1.5 py-1 px-2 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
+                            aria-label="Dislike"
                         >
-                            <ThumbsDown className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
+                            {
+                                comment.currentUserReaction === 'dislike' ? <ThumbsDown fill="blue" className={`w-4 h-4 transition-all duration-150 text-indigo-600`} /> : <ThumbsDown className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
+                            }
 
                             <span className={`transition-all duration-150`}>
                                 {formatNumberCount(comment.dislikeCount)}
                             </span>
                         </button>
                         <button
-                            className={`flex items-center space-x-1.5 py-1 px-3 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
+                            className={`flex items-center space-x-1.5 py-1 px-2 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
                             aria-label="Like"
                         >
                             <MessageSquare className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
 
-                            <span className={`transition-all duration-150`}>
+                            {/* <span className={`transition-all duration-150`}>
                                 {formatNumberCount(0)}
-                            </span>
+                            </span> */}
                         </button>
+                        {
+                            comment.user._id == user?._id && <button
+                                onClick={() => setIsEditing(!isEditing)}
+                                className={`flex items-center space-x-1.5 py-1 px-2 text-sm font-medium rounded-full transition-colors text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50`}
+                                aria-label="Like"
+                            >
+
+                                <Edit className={`w-4 h-4 transition-all duration-150 text-indigo-600`} />
+                            </button>
+                        }
+
                     </div>
                 </div>
             </div>

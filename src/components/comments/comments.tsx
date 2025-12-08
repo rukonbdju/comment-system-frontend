@@ -10,6 +10,7 @@ import { getComments } from "@/lib/features/comment/comment.thunks";
 const Comments = () => {
     const dispatch = useAppDispatch()
     const { comments } = useSelector(commentsSelector)
+    console.log(comments)
     useEffect(() => {
         dispatch(getComments())
     }, [dispatch])
@@ -18,8 +19,8 @@ const Comments = () => {
             <CommentForm />
             <FilterComments />
             <div className="comment-container">
-                {comments?.map((comment) => (
-                    <CommentCard key={comment._id} comment={comment} />
+                {comments?.map((comment, index) => (
+                    <CommentCard key={index} comment={comment} />
                 ))}
 
                 {comments && comments.length === 0 && (
