@@ -8,12 +8,33 @@ const initialState: commentsState = {
     comments: null,
     isLoading: true,
     error: null,
+    sort: "newest",
+    totalCount: 0,
+    currentPage: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+    limit: 10,
+    totalPages: 0
 }
 
 const commentSlice = createSlice({
     name: 'comments',
     initialState,
     reducers: {
+        setPage: (state, action) => {
+            state.currentPage = action.payload;
+        },
+
+        setSort: (state, action) => {
+            state.sort = action.payload;
+            state.currentPage = 1; // reset page on sort change
+        },
+
+        setLimit: (state, action) => {
+            state.limit = action.payload;
+            state.currentPage = 1;
+        },
+
         // ✅ Set all comments manually
         setComments: (state, action) => {
             state.comments = action.payload;
@@ -42,7 +63,7 @@ const commentSlice = createSlice({
                 state.comments[index] = action.payload;
             }
         },
-        // ✅ Update a comment reaction
+        // Update a comment reaction
         updateReaction: (state, action) => {
             if (!state.comments) return;
 
@@ -85,6 +106,12 @@ const commentSlice = createSlice({
         }).addCase(getComments.fulfilled, (state, action) => {
             if (action.payload.success) {
                 state.comments = action.payload.data;
+                state.totalCount = action.payload.meta.totalCount;
+                state.currentPage = action.payload.meta.currentPage;
+                state.hasNextPage = action.payload.meta.hasNextPage;
+                state.hasPrevPage = action.payload.meta.hasPrevPage;
+                state.limit = action.payload.meta.limit;
+                state.totalPages = action.payload.meta.totalPages;
                 state.isLoading = false;
                 state.error = null;
             } else {
@@ -99,7 +126,16 @@ const commentSlice = createSlice({
     }
 })
 export const commentsSelector = (state: RootState) => state.comment;
-export const { setComments, addComment, updateComment, updateReaction, deleteComment } = commentSlice.actions;
+export const {
+    setComments,
+    addComment,
+    updateComment,
+    updateReaction,
+    deleteComment,
+    setLimit,
+    setPage,
+    setSort,
+} = commentSlice.actions;
 
 const commentReducer = commentSlice.reducer;
 export default commentReducer;

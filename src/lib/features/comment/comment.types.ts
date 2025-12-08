@@ -15,4 +15,12 @@ export interface commentsState {
     comments: CommentDTO[] | null;
     isLoading: boolean;
     error: string | null;
+    sort: string;
+    totalCount: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+
 }

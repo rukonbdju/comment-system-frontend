@@ -30,6 +30,7 @@ const CommentEditForm = ({ id, defaultContent, setIsEditing }: PropsType) => {
             console.log(result)
             if (result.success) {
                 dispatch(updateComment(result.data))
+                setIsEditing(false)
             }
         } catch (error) {
             console.log(error)

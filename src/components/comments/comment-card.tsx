@@ -117,4 +117,41 @@ const CommentCard = ({ comment }: { comment: CommentDTO }) => {
     );
 };
 
+export const CommentCardSkeleton = () => {
+    return (
+        <div className="flex mb-8 animate-pulse">
+            {/* Avatar Skeleton */}
+            <div className="shrink-0 mr-3">
+                <div className="w-10 h-10 rounded-full bg-gray-300" />
+            </div>
+
+            {/* Content Skeleton */}
+            <div className="flex-1 min-w-0">
+                <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="h-4 w-32 bg-gray-300 rounded" />
+                        <div className="h-3 w-20 bg-gray-200 rounded" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="space-y-2 mt-2">
+                        <div className="h-4 w-full bg-gray-200 rounded" />
+                        <div className="h-4 w-5/6 bg-gray-200 rounded" />
+                        <div className="h-4 w-2/3 bg-gray-200 rounded" />
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-4 flex items-center gap-3">
+                        <div className="h-7 w-16 bg-gray-200 rounded-full" />
+                        <div className="h-7 w-16 bg-gray-200 rounded-full" />
+                        <div className="h-7 w-10 bg-gray-200 rounded-full" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
 export default CommentCard;
