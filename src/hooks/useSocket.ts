@@ -7,7 +7,9 @@ export const useSocket = (commentId: string) => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const newSocket = io(wsBaseURL, {});
+        const newSocket = io(wsBaseURL, {
+            path: '/comments/reactions/'
+        });
 
         newSocket.on('connect', () => {
             console.log('WS Client Connected');
@@ -18,8 +20,7 @@ export const useSocket = (commentId: string) => {
             console.log(`Client attempting to join room: ${roomName}`);
         });
 
-        // ... other listeners ...
-
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSocket(newSocket);
 
         // 3. Cleanup Phase
